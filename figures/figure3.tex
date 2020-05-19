@@ -1,0 +1,44 @@
+\begin{tikzpicture}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, 11);
+
+\draw [rounded corners] (.5, 0) rectangle (9, 1);
+\draw [dashed,thick] (0, 1.5) -- (12, 1.5);
+\draw [rounded corners] (.5, 2) rectangle (3, 2.5);
+\draw [rounded corners] (3.5, 2) rectangle (6, 2.5);
+\draw [rounded corners] (6.5, 2) rectangle (9, 2.5);
+\draw [rounded corners] (.5, 3) rectangle (9, 4.5);
+\draw [rounded corners] (5.5, 5) rectangle (8, 5.5);
+\draw [dashed,thick] (0, 6) -- (12, 6);
+\draw [rounded corners] (1.5, 6.5) rectangle (4, 7);
+\draw [rounded corners] (5.5, 7) rectangle (8, 7.5);
+\draw [rounded corners] (1.5, 7.5) rectangle (4, 8);
+\draw [rounded corners] (5.5, 8) rectangle (8, 8.5);
+\draw [rounded corners] (1.5, 8.5) rectangle (4, 9);
+\draw [dashed,thick] (0, 9.5) -- (12, 9.5);
+\draw [rounded corners] (.5, 10) rectangle (9, 11);
+
+\node at (10.5, .5) [font=\fontsize{12pt}{20pt}\selectfont] {Hardware};
+\node at (10.5, 3.75) [font=\fontsize{12pt}{20pt}\selectfont] {Kernel};
+\node at (10.5, 7.75) [font=\fontsize{12pt}{20pt}\selectfont] {Userspace};
+\node at (10.5, 10.5) [font=\fontsize{12pt}{20pt}\selectfont] {Remote};
+
+\node at (4.75, .5) [font=\fontsize{12pt}{20pt}\selectfont] {Hard Drive};
+\node at (1.75, 2.25) [font=\fontsize{12pt}{20pt}\selectfont] {ext4};
+\node at (4.75, 2.25) [font=\fontsize{12pt}{20pt}\selectfont] {XFS};
+\node at (7.75, 2.25) [font=\fontsize{12pt}{20pt}\selectfont] {$\cdots$};
+\node at (4.75, 3.6) [font=\fontsize{12pt}{20pt}\selectfont] {VFS};
+\node at (6.75, 5.25) [font=\fontsize{12pt}{20pt}\selectfont] {FUSE};
+\node at (2.75, 6.75) [font=\itshape\fontsize{12pt}{20pt}\selectfont] {read("/test")};
+\node at (2.75, 7.75) [font=\fontsize{12pt}{20pt}\selectfont] {glibc};
+\node at (2.75, 8.75) [font=\itshape\fontsize{12pt}{20pt}\selectfont] {cat /mnt/test};
+\node at (6.75, 7.25) [font=\fontsize{12pt}{20pt}\selectfont] {libfuse};
+\node at (6.75, 8.25) [font=\bfseries\fontsize{12pt}{20pt}\selectfont] {File Storage};
+\node at (4.75, 10.5) [font=\bfseries\fontsize{12pt}{20pt}\selectfont] {Object Storage Server};
+
+\draw (2.7, 8.5) -- (2.7, 8.15) -- (2.6, 8.15) -- (2.75, 8) -- (2.9, 8.15) -- (2.8, 8.15) -- (2.8, 8.5);
+\draw (2.7, 7.5) -- (2.7, 7.15) -- (2.6, 7.15) -- (2.75, 7) -- (2.9, 7.15) -- (2.8, 7.15) -- (2.8, 7.5);
+\draw (2.7, 6.5) -- (2.7, 4.1) -- (6.8, 4.1) -- (6.8, 4.85) -- (6.9, 4.85) -- (6.75, 5) -- (6.6, 4.85) -- (6.7, 4.85) -- (6.7, 4.2) -- (2.8, 4.2) -- (2.8, 6.5);
+\draw (6.7, 5.5) -- (6.7, 6.85) -- (6.6, 6.85) -- (6.75, 7) -- (6.9, 6.85) -- (6.8, 6.85) -- (6.8, 5.5);
+\draw (6.7, 7.5) -- (6.7, 7.85) -- (6.6, 7.85) -- (6.75, 8) -- (6.9, 7.85) -- (6.8, 7.85) -- (6.8, 7.5);
+\draw (6.7, 8.5) -- (6.7, 9.85) -- (6.6, 9.85) -- (6.75, 10) -- (6.9, 9.85) -- (6.8, 9.85) -- (6.8, 8.5);
+\end{tikzpicture}

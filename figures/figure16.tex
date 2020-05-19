@@ -1,0 +1,28 @@
+\begin{tikzpicture}
+\newcommand\tablewidth{10.5}
+\newcommand\tablex{1.5}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, -2.5);
+
+\draw (\tablex, -.5) -- (12, -.5) -- (12, -2.5) -- (\tablex, -2.5) -- cycle;
+
+\node at (\tablex/2, -.25) [font=\fontsize{12pt}{20pt}\selectfont] {byte};
+\foreach \x in {0,...,3} {
+    \node at (\x/4*\tablewidth+\tablewidth/8+\tablex, -.25) [font=\fontsize{12pt}{20pt}\selectfont] {\x};
+}
+\node at (\tablex/2, -.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0000};
+\node at (6+\tablex/2, -.75) [font=\fontsize{12pt}{20pt}\selectfont] {time\_low};
+\draw (\tablex, -1) -- (12, -1);
+\node at (\tablex/2, -1.25) [font=\fontsize{12pt}{20pt}\selectfont] {0x0004};
+\draw (6+\tablex/2, -1) -- (6+\tablex/2, -2);
+\node at (3+\tablex*3/4, -1.25) [font=\fontsize{12pt}{20pt}\selectfont] {time\_mid};
+\node at (9+\tablex/4, -1.25) [font=\fontsize{12pt}{20pt}\selectfont] {time\_hi\_and\_version};
+\draw (\tablex, -1.5) -- (12, -1.5);
+\node at (\tablex/2, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0008};
+\draw (3+\tablex*3/4, -1.5) -- (3+\tablex*3/4, -2);
+\node at (1.5+\tablex*7/8, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {clk\_seq\_hi\_res};
+\node at (4.5+\tablex*5/8, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {clk\_seq\_low};
+\node at (9+\tablex/4, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {node (0-1)};
+\draw (\tablex, -2) -- (12, -2);
+\node at (\tablex/2, -2.25) [font=\fontsize{12pt}{20pt}\selectfont] {0x000c};
+\node at (6+\tablex/2, -2.25) [font=\fontsize{12pt}{20pt}\selectfont] {node (2-5)};
+\end{tikzpicture}

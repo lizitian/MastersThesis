@@ -1,0 +1,39 @@
+\begin{tikzpicture}
+\newcommand\tablewidth{10.5}
+\newcommand\tablex{1.5}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, -4);
+
+\draw (\tablex, -.5) -- (12, -.5) -- (12, -4) -- (\tablex, -4) -- cycle;
+
+\node at (\tablex/2, -.25) [font=\fontsize{12pt}{20pt}\selectfont] {byte};
+\foreach \x in {0,...,15} {
+    \node at (\x/16*\tablewidth+\tablewidth/32+\tablex, -.25) [font=\fontsize{12pt}{20pt}\selectfont] {\x};
+}
+\draw (\tablex, -1) -- (12, -1);
+\node at (\tablex/2, -.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0000};
+\node at (6+\tablex/2, -.75) [font=\fontsize{12pt}{20pt}\selectfont] {UUID};
+\draw (\tablex, -1.5) -- (12, -1.5);
+\node at (\tablex/2, -1.25) [font=\fontsize{12pt}{20pt}\selectfont] {0x0010};
+\node at (6+\tablex/2, -1.25) [font=\fontsize{12pt}{20pt}\selectfont] {UUID$_{prev}$};
+\draw (\tablex, -2) -- (12, -2);
+\draw (6+\tablex/2, -1.5) -- (6+\tablex/2, -2);
+\node at (\tablex/2, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0020};
+\node at (3+\tablex*3/4, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {start $=$ offset};
+\node at (9+\tablex/4, -1.75) [font=\fontsize{12pt}{20pt}\selectfont] {end $=$ offset $+$ length};
+
+\draw (\tablex, -2.5) -- (12, -2.5);
+\node at (\tablex/2, -2.25) [font=\fontsize{12pt}{20pt}\selectfont] {0x0030};
+\node at (6+\tablex/2, -2.25) [font=\fontsize{12pt}{20pt}\selectfont] {UUID};
+\draw (\tablex, -3) -- (12, -3);
+\node at (\tablex/2, -2.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0040};
+\node at (6+\tablex/2, -2.75) [font=\fontsize{12pt}{20pt}\selectfont] {UUID$_{prev}$};
+\draw (\tablex, -3.5) -- (12, -3.5);
+\draw (6+\tablex/2, -3) -- (6+\tablex/2, -3.5);
+\node at (\tablex/2, -3.25) [font=\fontsize{12pt}{20pt}\selectfont] {0x0050};
+\node at (3+\tablex*3/4, -3.25) [font=\fontsize{12pt}{20pt}\selectfont] {start $=$ offset};
+\node at (9+\tablex/4, -3.25) [font=\fontsize{12pt}{20pt}\selectfont] {end $=$ offset $+$ length};
+
+\node at (\tablex/2, -3.75) [font=\fontsize{12pt}{20pt}\selectfont] {0x0060};
+\node at (6+\tablex/2, -3.75) [font=\fontsize{12pt}{20pt}\selectfont] {$\cdots$};
+
+\end{tikzpicture}

@@ -1,0 +1,30 @@
+\begin{tikzpicture}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, -15);
+
+\node at (6, -0.5) [font=\fontsize{12pt}{20pt}\selectfont] {读取文件 pos 位置内容};
+\draw (9, 0) arc (90:-90:0.5) -- (3, -1) arc (270:90:0.5) -- cycle;
+\node at (6, -3) [align=center,font=\fontsize{12pt}{20pt}\selectfont] {令变量 UUID、prev、start、end 为待读取文\\件元数据中 UUID 时间戳最近的记录的对应值};
+\draw (1, -2) rectangle (11, -4);
+\node at (6, -6) [font=\fontsize{12pt}{20pt}\selectfont] {start $\leq$ pos $<$ end $?$};
+\draw (6, -5) -- (9, -6) -- (6, -7) -- (3, -6) -- cycle;
+\node at (6, -8) [font=\fontsize{12pt}{20pt}\selectfont] {否};
+\node at (11.75, -8) [font=\fontsize{12pt}{20pt}\selectfont] {是};
+\node at (6, -10) [align=center,font=\fontsize{12pt}{20pt}\selectfont] {令变量 UUID、prev、start、end 为待读取\\文件元数据中 UUID 为 prev 的记录的对应值};
+\draw (1, -9) rectangle (11, -11);
+\node at (6, -14) [align=center,font=\fontsize{12pt}{20pt}\selectfont] {返回对象存储中 UUID 对应对\\象的 $($pos $-$ start$)$ 位置的数据};
+\draw (9, -13) arc (90:-90:1) -- (3, -15) arc (270:90:1) -- cycle;
+
+\newcommand\arrowhead{0.15}
+\draw (6, -1) -- (6, -2+\arrowhead);
+\fill [color=black] (6-\arrowhead, -2+\arrowhead) -- (6, -2) -- (6+\arrowhead, -2+\arrowhead);
+\draw (6, -4) -- (6, -5+\arrowhead);
+\fill [color=black] (6-\arrowhead, -5+\arrowhead) -- (6, -5) -- (6+\arrowhead, -5+\arrowhead);
+\draw (6, -7) -- (6, -7.75);
+\draw (6, -8.25) -- (6, -9+\arrowhead);
+\fill [color=black] (6-\arrowhead, -9+\arrowhead) -- (6, -9) -- (6+\arrowhead, -9+\arrowhead);
+\draw (9, -6) -- (11.75, -6) -- (11.75, -7.75);
+\draw (11.75, -8.25) -- (11.75, -12) -- (6, -12) -- (6, -13+\arrowhead);
+\fill [color=black] (6-\arrowhead, -13+\arrowhead) -- (6, -13) -- (6+\arrowhead, -13+\arrowhead);
+\draw (1, -10) -- (0.25, -10) -- (0.25, -6) -- (3-\arrowhead, -6);
+\fill [color=black] (3-\arrowhead, -6-\arrowhead) -- (3, -6) -- (3-\arrowhead, -6+\arrowhead);
+\end{tikzpicture}

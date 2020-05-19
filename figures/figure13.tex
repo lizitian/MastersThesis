@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, -6.6);
+
+\filldraw [fill=black!20!white] (0.3, -0.3) circle (0.3);
+\node at (0.3, -0.3) [font=\fontsize{12pt}{20pt}\selectfont] {$x_1$};
+\filldraw [fill=black!20!white] (0.3, -1.5) circle (0.3);
+\node at (0.3, -1.5) [font=\fontsize{12pt}{20pt}\selectfont] {$x_2$};
+\filldraw [fill=black!20!white] (0.3, -2.7) circle (0.3);
+\node at (0.3, -2.7) [font=\fontsize{12pt}{20pt}\selectfont] {$x_3$};
+\filldraw [fill=black!20!white] (0.3, -3.9) circle (0.3);
+\node at (0.3, -3.9) [font=\fontsize{12pt}{20pt}\selectfont] {$x_4$};
+\filldraw [fill=black!20!white] (0.3, -5.1) circle (0.3);
+\node at (0.3, -5.1) [font=\fontsize{12pt}{20pt}\selectfont] {$x_5$};
+\filldraw [fill=black!20!white] (0.3, -6.3) circle (0.3);
+\node at (0.3, -6.3) [font=\fontsize{12pt}{20pt}\selectfont] {$x_6$};
+
+\filldraw [fill=black!20!white] (7, -1.2) rectangle (12, -1.8);
+\node at (9.5, -1.5) [font=\fontsize{12pt}{20pt}\selectfont] {$r_1=x_1+x_2+x_4+x_5$};
+\filldraw [fill=black!20!white] (7, -3) rectangle (12, -3.6);
+\node at (9.5, -3.3) [font=\fontsize{12pt}{20pt}\selectfont] {$r_2=x_1+x_3+x_5+x_6$};
+\filldraw [fill=black!20!white] (7, -4.8) rectangle (12, -5.4);
+\node at (9.5, -5.1) [font=\fontsize{12pt}{20pt}\selectfont] {$r_3=x_2+x_3+x_4+x_6$};
+
+\draw (0.6, -0.3) -- (7, -1.5);
+\draw (0.6, -1.5) -- (7, -1.5);
+\draw (0.6, -3.9) -- (7, -1.5);
+\draw (0.6, -5.1) -- (7, -1.5);
+\draw (0.6, -0.3) -- (7, -3.3);
+\draw (0.6, -2.7) -- (7, -3.3);
+\draw (0.6, -5.1) -- (7, -3.3);
+\draw (0.6, -6.3) -- (7, -3.3);
+\draw (0.6, -1.5) -- (7, -5.1);
+\draw (0.6, -2.7) -- (7, -5.1);
+\draw (0.6, -3.9) -- (7, -5.1);
+\draw (0.6, -6.3) -- (7, -5.1);
+\end{tikzpicture}

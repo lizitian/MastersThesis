@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+\fill [color=white,opacity=0] (0, 0) rectangle (12, 6);
+
+\node at (3, 0.5) [font=\fontsize{12pt}{20pt}\selectfont] {(a){\quad}Modify};
+\node at (3, 1.25) [font=\fontsize{12pt}{20pt}\selectfont] {New Object};
+\draw (2.5, 2) -- (2.5, 1.5);
+\draw (3.5, 2) -- (3.5, 1.5);
+\draw [latex-latex] (2.5, 1.6) -- (3.5, 1.6);
+\filldraw [fill=black!20!white] (2.5, 2) rectangle (3.5, 3);
+\draw [dashed] (2.5, 3) -- (2.5, 4);
+\draw [dashed] (3.5, 3) -- (3.5, 4);
+\fill [color=black!20!white] (2.5, 4) rectangle (3.5, 5);
+\draw (0.5, 4) rectangle (5.5, 5);
+\draw (2.5, 4) -- (2.5, 5);
+\draw (3.5, 4) -- (3.5, 5);
+\draw (0.5, 5) -- (0.5, 5.5);
+\draw (5.5, 5) -- (5.5, 5.5);
+\draw [latex-latex] (0.5, 5.4) -- (5.5, 5.4);
+\node at (3, 5.75) [font=\fontsize{12pt}{20pt}\selectfont] {Original File};
+
+\node at (9, 0.5) [font=\fontsize{12pt}{20pt}\selectfont] {(b){\quad}Append};
+\node at (11, 1.25) [font=\fontsize{12pt}{20pt}\selectfont] {New Object};
+\draw (10.5, 2) -- (10.5, 1.5);
+\draw (11.5, 2) -- (11.5, 1.5);
+\draw [latex-latex] (10.5, 1.6) -- (11.5, 1.6);
+\filldraw [fill=black!20!white] (10.5, 2) rectangle (11.5, 3);
+\draw [dashed] (10.5, 3) -- (10.5, 4);
+\draw [dashed] (11.5, 3) -- (11.5, 5);
+\draw (6.5, 4) rectangle (10.5, 5);
+\draw [dashed] (10.5, 4) -- (11.5, 4);
+\draw [dashed] (10.5, 5) -- (11.5, 5);
+\draw (6.5, 5) -- (6.5, 5.5);
+\draw (10.5, 5) -- (10.5, 5.5);
+\draw [latex-latex] (6.5, 5.4) -- (10.5, 5.4);
+\node at (8.5, 5.75) [font=\fontsize{12pt}{20pt}\selectfont] {Original File};
+\end{tikzpicture}
