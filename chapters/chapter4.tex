@@ -7,20 +7,22 @@
 对于 On-demand ARECS 算法来说，需要我们首先确定数据的可用性。根据上一章的分析我们可以得知，由于边际成本较边际收益增加幅度更快，因此选取合理的对象持久性，可以最大限度的提高成本收益率。On-demand ARECS 算法需要我们根据数据本身的特征选取合适的对象持久性，对于较为重要的数据，选取较高的 $p_{f}'$，对于一般的数据，选取较低的 $p_{f}'$，在此基础上进行算法的优化选择。
 
 其次 On-demand ARECS 算法根据磁盘的属性等信息预测磁盘的可靠性。我们通过读取磁盘的 S.M.A.R.T. 信息，获得磁盘的重分配扇区数 $N_{RS}$，并通过统计数据中心中所有磁盘中和所有损坏磁盘中 $N_{RS}$ 的分布，依靠贝叶斯定理计算当前磁盘的故障率：
-$$
+\begin{equation}
 p_d=\dfrac{\mathrm{num.\ of\ failed\ disks\ with\ }N_{RS}}{\mathrm{num.\ of\ all\ disks\ with\ }N_{RS}}
-$$
+\end{equation}
 
 在得出对象持久性和磁盘可靠性之后，我们便可以依据对象可用性和磁盘可靠性的关系计算存储的纠删码方案，通过上一章中的分析与计算，我们可以得知编码块数 $m$ 的取值为：
-$$
+\begin{equation}
 m(n)=\left\lceil\operatorname*{argmin}_{m}f(n,m)\right\rceil,\ \operatorname*{where}\ f(n,m) \geq 0
-$$
+\end{equation}
 
 其中 $f(n,m)$ 为：
-\begin{align*}
+\begin{equation}
+\begin{split}
 f(n,m)=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}&\left[\left(\prod_{{\forall}d_{j}{\in}S_{d}}\left(1-(1-p_{d_j})^{t_r}\right)\right)\right.\\
 &\cdot\left.\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_{d_j})^{t_{r}}\right)\right]-p_{f}^{t_{r}}
-\end{align*}
+\end{split}
+\end{equation}
 
 因此，我们便可以基于此选择数据冗余度最低的纠删码编码方案 $(n+m,n)$ 及其对应的磁盘组 $S_{d}'(n+m)$。需要注意的是，由于不同磁盘可能存在故障率相同的情况，且 $m$ 的选取对 $\displaystyle\operatorname*{argmin}_{m}f(n,m)$ 进行了向上取整操作，因此此处的 $S_{d}'(n+m)$ 存在不止一组满足条件的组合。
 \section{基于存储速度的节点选择策略}
@@ -35,70 +37,74 @@ f(n,m)=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}&\left[\left(\prod_{{
 \end{itemize}
 
 可以看出，磁盘的总读写时间 $t_{d}$ 应为以上三个步骤所需要的时间之和，具体可以表示为：
-$$
+\begin{equation}
 t_{d}=t_{queue}+t_{latency}+\dfrac{data\_size}{bandwidth}
-$$
+\end{equation}
 
 对于使用互联网传输的分布式存储系统来说，由于网络环境波动等原因，读写延迟和数据传输带宽是实时发生变化的。因此，我们在计算总的磁盘读写时间 $t_{d}$ 时，需要动态采集读写延时和数据传输带宽。在 On-demand ARECS 算法中，我们在存储系统中的节点每次进行数据读写时，将本次操作的读写延时和数据传输带宽等关键参数进行保存，以便存储系统后续进行写入时使用。
 
 对于分布式存储系统来说，不同节点之间的读写操作是相对独立的，因此可以认为数据在不同节点间是并行读写的。因此，总读写时间实际上就是所有节点均完成读写所需要的时间，即所有节点的读写时间 $t_{d_i}$ 中的最大值 $\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}$。对于纠删码分布式存储系统来说，在数据进行写入之前，需要首先进行纠删码校验码的编码计算，因此需要再加上纠删码编码所耗费的 CPU 时间 $t_{calc}$。进而此纠删码分布式存储系统的总读写时间可以表示为：
-$$
+\begin{equation}
 t_{f}(n+m)=t_{calc}+\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}
-$$
+\end{equation}
 \subsection{分块存储的对象所需总磁盘读写时间的计算}
 对于较大的对象，为避免直接采用纠删码编码时编码矩阵过大，计算效率过低的问题，我们可以将较大的数据分为多个块，不同块之间可以并行进行存储，从而提高存储效率。若将数据分为 $r$ 块 $(b_{1},b_{2},\cdots,b_{r})$，则每一块数据的读写时间分别为：
-$$
+\begin{equation}
 \begin{cases}
 \left(t_{f}(n+m)\right)_{b_{1}}=(t_{calc})_{b_{1}}+\left(\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{1}}\\
 \left(t_{f}(n+m)\right)_{b_{2}}=(t_{calc})_{b_{2}}+\left(\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{2}}\\
 \vdots\\
 \left(t_{f}(n+m)\right)_{b_{r}}=(t_{calc})_{b_{r}}+\left(\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{r}}\\
 \end{cases}
-$$
+\end{equation}
 
 我们不妨假设数据从 $b_{1}$ 到 $b_{r}$ 按照顺序依次传输，那么存储系统处理这些数据所用的总读写时间为：
-$$
+\begin{equation}
 t_{f}(n+m)=\sum_{x=1}^{r}\left(t_{f}(n+m)\right)_{b_{x}}
-$$
+\end{equation}
 
 即：
-$$
+\begin{equation}
 t_{f}(n+m)=\sum_{x=1}^{r}\left((t_{calc})_{b_{x}}+\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{x}}\right)
-$$
+\end{equation}
 
 但由于数据的计算和数据的传输可以并行执行，在传输前一个数据块的内容的同时，可以同时并行进行后一个数据块的编码计算，即传输 $b_{i}$ 和 $b_{i+1}$ 块所用的时间不是：
-$$
+\begin{equation}
 \left(t_{f}(n+m)\right)_{\{b_{i},b_{i+1}\}}=(t_{calc})_{b_{i}}+\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{i}}+(t_{calc})_{b_{i+1}}+\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{i+1}}
-$$
+\end{equation}
 
 而应该是：
-\begin{align*}
+\begin{equation}
+\begin{split}
 \left(t_{f}(n+m)\right)_{\{b_{i},b_{i+1}\}}&=(t_{calc})_{b_{i}}+\max\left(\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{i}},(t_{calc})_{b_{i+1}}\right)\\
 &\quad+\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{i+1}}
-\end{align*}
+\end{split}
+\end{equation}
 
 因此，传输这 $r$ 个数据块所需要花费的总时间可以表达为：
-\begin{align*}
+\begin{equation}
+\begin{split}
 t_{f}(n+m)&=(t_{calc})_{b_1}+\left(\sum_{x=2}^{r}\max\left((t_{calc})_{b_{x-1}},\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{x}}\right)\right)\\
 &\quad+\left(\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_r}
-\end{align*}
+\end{split}
+\end{equation}
 
 由于在实际的分布式存储系统实现中，我们一般将数据切分为大小确定且均等的数据块，故对于上式来说，可以取 $(t_{calc})_{b_x}=t_{calc}$，$\left(\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)_{b_{x}}=\displaystyle\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}$。因此我们可以得到实际的分布式存储系统中数据编码和传输所需要的总时间：
-$$
+\begin{equation}
 t_{f}(n+m)=t_{calc}+\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}+(r-1)\left(\max\left(t_{calc},\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)\right)
-$$
+\end{equation}
 \subsection{基于最小化磁盘读写时间的存储节点组合选择策略}
 根据 Liu 等人的研究\cite{liu2018implementation}，在数据量一定的的前提下，随着数据分块数 $n$ 的增大，虽然数据冗余度有所下降，但纠删码的编码时间迅速上升。因此，需要我们综合考虑数据冗余度和存储速度，选取数据分块数 $n$ 相对较小且数据冗余度不过高的编码方案，无需考虑 $n$ 值过大的存储策略所对应的存储方案，从而降低存储系统中纠删码编码所用的时间，提高存储系统的性能。
 
 在此基础上，我们需要在所有满足上述条件的磁盘组 $S_{d}'(n+m)$ 中选取存储延时 $t_{f}(n+m)$ 最小的磁盘组，即选取的磁盘组为：
-$$
+\begin{equation}
 S_{d}'(n+m)=\operatorname*{argmin}_{S_{d}'(n+m)}{t_{f}(n+m)}
-$$
+\end{equation}
 
 代入上一节中得到的数据均等切分情况下数据编码和传输所需要的总时间 $t_{f}(n+m)$，得到选取的磁盘组为：
-$$
+\begin{equation}
 S_{d}'(n+m)=\operatorname*{argmin}_{S_{d}'(n+m)}\left(t_{calc}+\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}+(r-1)\left(\max\left(t_{calc},\max_{d_{i}{\in}S_{d}'(n+m)}t_{d_i}\right)\right)\right)
-$$
+\end{equation}
 \section{实验与分析}
 \subsection{实验环境}
 为了验证 On-demand ARECS 算法动态选择纠删码编码策略和存储节点的算法效果，我们基于 Tahoe-LAFS 分布式文件系统\cite{wilcox2008tahoe}实现了 On-demand ARECS 算法。Tahoe-LAFS 是一个免费、开源、安全、去中心化、容错性好的分布式存储和分布式文件系统，其围绕“最小权限原则”（Principle of Least Authority，即 POLA）进行设计和实现，严格使用加密传输数据，并针对每项功能仅提供能完成相应操作的最小特权集。由于数据均进行了加密和冗余备份，因此存储系统中的每个节点均无需保证其可靠性。Tahoe-LAFS 的纠删码引擎基于 zfec 纠删码编码库实现，其提供了三种不同类型的节点：
@@ -146,14 +152,14 @@ vCPU 数量 & 1 vCPU & 2 vCPU\\\hline
 
 分析图 \ref{p7} 我们可以看出，当数据切分数 $n$ 较小时，数据冗余度较高，因此需要传输的总数据量 $data\_size$ 更大，从而使得总文件传输时间更长。当数据切分数 $n$ 过大时，由于纠删码的编码矩阵更加复杂，编码时间 $t_{calc}$ 时间更长，同时过多的切分数需要选择更多的节点，因此选择到慢速节点的可能性更大，即数据读写延迟 $t_{calc}$ 更大，数据传输带宽 $bandwidth$ 更小，同样使得文件传输时间更长。针对本文中选取的测试环境来说，在数据切分数 $n$ 取 $n=16$ 左右时存储系统的耗时最短。故若根据实际的传输情况选择数据切分数合适的编码方案，可以很大程度上降低存储系统的文件传输时间。
 
-在 On-demand ARECS 算法中，我们通过动态地选取最优的编码方案和数据存储节点，从而减小数据的存储延时。我们在实现了 On-demand ARECS 算法的 Tahoe-LAFS 分布式文件系统中，分别测试了原始的多备份方案以及基于 On-demand ARECS 算法的里德-所罗门码纠删码编码方案，针对上述生成的 10 MB、50 MB 和 200 MB 大小的测试数据对象文件进行了实验，实验结果如图 \ref{p8} 所示。在实验中，分析存储系统的记录可以得到，其中 On-demand ARECS 算法选取了 $(n+m,n)=(20,16)$ 的纠删码编码策略，使用的存储节点占全部存储节点的 $56\%$。原始的纠删码算法则选取了 $(n+m,n)=(10,3)$ 的纠删码编码策略，使用的存储节点占全部存储节点的 $28\%$。多副本备份方案则直接存储了 $4$ 份原始数据作为冗余备份。
-
 \begin{figure}[!htb]
 \centering
 \resizebox{.8\textwidth}{!}{\input{figures/figure8}}
 \caption{On-demand ARECS 算法和多备份、固定纠删码算法存储延时对比}
 \label{p8}
 \end{figure}
+
+在 On-demand ARECS 算法中，我们通过动态地选取最优的编码方案和数据存储节点，从而减小数据的存储延时。我们在实现了 On-demand ARECS 算法的 Tahoe-LAFS 分布式文件系统中，分别测试了原始的多备份方案以及基于 On-demand ARECS 算法的里德-所罗门码纠删码编码方案，针对上述生成的 10 MB、50 MB 和 200 MB 大小的测试数据对象文件进行了实验，实验结果如图 \ref{p8} 所示。在实验中，分析存储系统的记录可以得到，其中 On-demand ARECS 算法选取了 $(n+m,n)=(20,16)$ 的纠删码编码策略，使用的存储节点占全部存储节点的 $56\%$。原始的纠删码算法则选取了 $(n+m,n)=(10,3)$ 的纠删码编码策略，使用的存储节点占全部存储节点的 $28\%$。多副本备份方案则直接存储了 $4$ 份原始数据作为冗余备份。
 
 根据图 \ref{p8} 的实验结果可以看出，On-demand ARECS 算法通过在分布式存储系统中选取适当的纠删码编码方案和节点，最大限度地平衡系统负载，并提高系统的并行度，从而提高了系统的存储效率。其相比于目前的纠删码算法将文件传输时间平均降低了 $46\%$，相比原始的多备份方案则有更加显著地提升。
 \section{小结}

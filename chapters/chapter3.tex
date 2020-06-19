@@ -30,51 +30,53 @@ Azure Blob Storage (GRS)\cite{microsoft2020azure} & 99.99999999999999\%\\\hline
 \end{table}
 \subsection{提高数据可用性的成本收益分析}
 对于重要的数据，我们需要保证更高的数据可用性，因此需要选择更高的对象持久性保证的存储系统。也就是说，数据的重要性与 $p_{f}'$ 的选取是正相关的。但是，要想提高 $p_{f}'$，就需要更多的存储设备来存储数据的冗余备份，存储系统的成本也会随之上升。我们对数据存储过程的成本和收益进行分析可以发现，若假设一个单位的数据价值为 $x$ 个单位，则可用性为 $p_{f}'$ 时数据的收益为 $xp_{f}'$。假设存储系统的对象持久性达到 $p_{f}'$ 时，每个单位数据需要占用 $s(p_{f}')$ 单位的存储节点，每个单位的存储节点价格为 $y$ 个单位，则数据存储的成本为 $ys(p_{f}')$。因此可以得到系统在存储收益和存储成本相等时的平衡点为：
-$$
+\begin{equation}
 xp_{f}'=ys(p_{f}')
-$$
+\end{equation}
 
 在达到此平衡点后，若继续提高数据可用性，数据存储的边际成本会大于其边际收益，造成存储资源的浪费。因此，我们需要根据不同类型数据的重要程度，有针对性地选取对象持久性 $p_{f}'$，进而提升存储系统的成本收益率。
 \section{数据可用性和磁盘故障率的关系}
 \subsection{固定磁盘故障率模型}
 在目前的分布式存储系统中，一般均采用固定的存储设备故障率的模型，来计算对象的持久性。固定磁盘故障率模型假设系统中共有 $n+m$ 块磁盘，每块硬盘故障率为 $p_d$，易得硬盘完好的概率为 $1-p_d$。假设硬盘发生损坏是独立随机事件，也就是不同硬盘的损坏之间没有关联，那么根据概率计算的乘法公式，可以推导得出，在 $n+m$ 块磁盘中，恰好有 $i$ 块磁盘发生故障，另 $n+m-i$ 块磁盘完好的概率为：
-$$
+\begin{equation}
 \dbinom{n+m}{i}p_{d}^{i}(1-p_d)^{n+m-i}
-$$
+\end{equation}
 
 其中 $\dbinom{n+m}{i}$ 为二项式系数，代表着从 $n$ 块硬盘中任选 $i$ 块硬盘的所有组合数。
 
 对于有 $n$ 个数据块，$m$ 个校验块的纠删码编码，要想保障对象的持久性，需要至少有 $m$ 块硬盘不发生故障，因此概率为恰好有 $0$ 块磁盘故障到恰好有 $m$ 块磁盘故障的所有可能性求和。即：
-$$
+\begin{equation}
 p_{f}(n,m)=\sum_{i=0}^{m}{\dbinom{n+m}{i}p_{d}^{i}(1-p_d)^{n+m-i}}
-$$
+\end{equation}
 
 其中 $p_f$ 即为对象的持久性，满足 $0<p_f<1$，数据块 $n$ 和校验块 $m$ 满足 $n>0$ 且 $m>0$，硬盘故障率 $p_d$ 满足 $0<p_d<1$。
 
 特别地，若取 $n=1$，那么系统便退化为多副本备份，此时对象持久性为：
-$$
+\begin{equation}
 p_{f}(1,m)=\sum_{i=0}^{m}{\dbinom{1+m}{i}p_{d}^{i}(1-p_d)^{1+m-i}}
-$$
+\end{equation}
 
 根据二项式定理：
-$$
+\begin{equation}
 (x+y)^n=\sum_{i=0}^{n}{\dbinom{n}{i}x^{i}y^{n-i}}
-$$
+\end{equation}
 
 我们有：
-$$
+\begin{equation}
 \left(p_d+(1-p_d)\right)^{1+m}=\sum_{i=0}^{1+m}{\dbinom{1+m}{i}p_{d}^{i}(1-p_d)^{1+m-i}}
-$$
+\end{equation}
 
 代入多副本备份的对象持久性公式中，得：
-\begin{align*}
+\begin{equation}
+\begin{split}
 p_{f}(1,m)&=\sum_{i=0}^{m}{\dbinom{1+m}{i}p_{d}^{i}(1-p_d)^{1+m-i}}\\
 &=\left(\sum_{i=0}^{1+m}{\dbinom{1+m}{i}p_{d}^{i}(1-p_d)^{1+m-i}}\right)\\
 &\quad-\left(\dbinom{1+m}{1+m}p_{d}^{1+m}(1-p_d)^{1+m-(1+m)}\right)\\
 &=\left(p_d+(1-p_d)\right)^{1+m}-p_{d}^{1+m}(1-p_d)^{0}\\
 &=1^{1+m}-p_{d}^{1+m}\\
 &=1-p_{d}^{1+m}
-\end{align*}
+\end{split}
+\end{equation}
 
 此公式即退化为在多副本备份中，要想保证数据不丢失，需要满足所有硬盘不同时损坏。对象的持久性为 $1$ 减去所有磁盘同时发生损坏的概率。
 \subsection{动态磁盘故障率模型}
@@ -83,9 +85,9 @@ p_{f}(1,m)&=\sum_{i=0}^{m}{\dbinom{1+m}{i}p_{d}^{i}(1-p_d)^{1+m-i}}\\
 根据 Ma 等\cite{ma2015raidshield}的研究，由于磁盘在扇区损坏时会重新分配完好的扇区来进行代替，因此磁盘的重分配的扇区数（Reallocated Sectors）与磁盘的故障率密切相关，其中磁盘的重分配扇区数可以通过其 S.M.A.R.T. 信息\cite{allen2004monitoring}获得。磁盘的故障率可以根据 S.M.A.R.T. 等信息来预测\cite{xu2018improving,mahdisoltani2017proactive,lu2020making,dos2017predicting,chaves2018hard,botezatu2016predicting,anantharaman2018large}。根据贝叶斯定理（Bayes' Theorem），我们可以使用数据中心完好磁盘和损坏磁盘的统计信息，预测磁盘故障率。
 
 贝叶斯定理是概率论中的一个定理，描述在已知一些条件下某事件的发生概率。关于随机事件 $A$ 和 $B$ 的条件概率，贝叶斯定理给出了：
-$$
+\begin{equation}
 P(A|B)=\dfrac{P(B|A)P(A)}{P(B)}
-$$
+\end{equation}
 
 其中：
 \begin{itemize}
@@ -105,12 +107,14 @@ $$
 \end{itemize}
 
 根据贝叶斯定理，我们可以得到这块硬盘的故障率：
-\begin{align*}
+\begin{equation}
+\begin{split}
 p_d&=P(fail|N_{RS})\\
 &=\dfrac{P(N_{RS}|fail){\times}P(fail)}{P(N_{RS})}\\
 &=\dfrac{\dfrac{\mathrm{num.\ of\ failed\ disks\ with\ }N_{RS}}{\mathrm{num.\ of\ failed\ disks}}\times\dfrac{\mathrm{num.\ of\ failed\ disks}}{\mathrm{num.\ of\ disks}}}{\dfrac{\mathrm{num.\ of\ all\ disks\ with\ }N_{RS}}{\mathrm{num.\ of\ disks}}}\\
 &=\dfrac{\mathrm{num.\ of\ failed\ disks\ with\ }N_{RS}}{\mathrm{num.\ of\ all\ disks\ with\ }N_{RS}}
-\end{align*}
+\end{split}
+\end{equation}
 
 因此，我们可以根据数据中心中所有完好磁盘和损坏磁盘的 $N_{RS}$ 统计量，预测磁盘的故障率 $p_d$。
 \subsubsection{基于动态磁盘故障率的对象可用性计算}
@@ -122,46 +126,50 @@ p_d&=P(fail|N_{RS})\\
 \end{itemize}
 
 也就是说，$S_{a}(n,k)$ 为从 $S_{d}'(n)$ 中任取 $k$ 个元素组成的集合的全体，即：
-$$
+\begin{equation}
 S_{a}(n,k)=\left\{\{d_{1},d_{2},\cdots,d_{k}\},\{d_{1},\cdots,d_{k-1},d_{k+1}\},\cdots,\{d_{n-k+1},d_{n-k+2},\cdots,d_{n}\}\right\}
-$$
+\end{equation}
 
 基于上述定义，我们对动态磁盘故障率模型的对象持久性进行计算。易知，对于任意磁盘集合 $S_{d}{\subseteq}S_{d}'(n)$，其相对于全集 $S_{d}'(n)$ 的补集为 $S_{d}'(n)-S_{d}$。假设存在一块磁盘 $d_j$，该磁盘的故障率为 $p_{d_j}$，若对于磁盘损坏事件来说满足独立事件假设，即不同磁盘的损坏之间没有内在联系，那么根据概率论的乘法公式，可以得到 $S_{d}$ 全部损坏，并且 $S_{d}'(n)-S_{d}$ 全部完好的概率为：
-$$
+\begin{equation}
 \left(\prod_{{\forall}d_{j}{\in}S_{d}}{p_{d_j}}\right)\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_{d_j})\right)
-$$
+\end{equation}
 
 根据纠删码的解码原理，我们需要至少 $n$ 块磁盘是完好的，或者说至多有 $m$ 块磁盘是损坏的。因此，只要在存储数据块和编码块的全部磁盘 $S_{d}'(n+m)$ 中存在磁盘组 $S_{good}$，满足 $S_{good}$ 中的所有磁盘均是可用的，$S_{good}{\subseteq}S_{d}'(n)$ 且 $\|S_{good}\| \geq n$，我们便可根据 $S_{good}$ 磁盘组中的数据恢复出全部的原始数据。由此，我们可以得到 $S_{good}$ 的取值范围 ${\forall}S_{good}{\in}S_{a}(n+m,i)$，其中 $0 \leq i \leq m$。
 
 由于满足对象持久性约束的情况为满足上述条件的全体，根据概率论的加法公式，求和得到概率为：
-$$
+\begin{equation}
 p_{f}(n,m)=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}\left[\left(\prod_{{\forall}d_{j}{\in}S_{d}}{p_{d_j}}\right)\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_{d_j})\right)\right]
-$$
+\end{equation}
 
 特别地，当公式中的 $p_{d_j}$ 均取值 $p_d$ 时，也就是各磁盘故障率相同，此公式便退化为固定磁盘故障率的对象持久性公式：
-\begin{align*}
+\begin{equation}
+\begin{split}
 p_{f}(n,m)&=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}\left[\left(\prod_{{\forall}d_{j}{\in}S_{d}}{p_d}\right)\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_d)\right)\right]\\
 &=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}\left[\left({p_d}^{\|S_{d}\|}\right)\left((1-p_d)^{\|S_{d}'(n+m)-S_{d}\|}\right)\right]\\
 &=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}\left[\left({p_d}^{i}\right)\left((1-p_d)^{n+m-i}\right)\right]\\
 &=\sum_{i=0}^{m}\|S_{a}(n+m,i)\|\left({p_d}^{i}(1-p_d)^{n+m-i}\right)\\
 &=\sum_{i=0}^{m}\dbinom{n+m}{i}{p_d}^{i}(1-p_d)^{n+m-i}
-\end{align*}
+\end{split}
+\end{equation}
 \section{损坏节点更换对模型的影响}
 在上述分析中，对于总节点数为 $s$ 的存储系统，若待存储对象持久性为 $p_{f}'$，On-demand ARECS 算法需要在所有的节点中选取 $n+m$ 个节点，满足 $p_{f}(n,m) \geq p_{f}'$，从而做到在保证对象的持久性需求的基础上，选取最优的编码策略。然而，上述分析中的对象持久性和磁盘故障率均按照一年期进行计算，但在实际的数据中心中，存储系统的运行和维护人员每个工作日均会对节点状态进行检查，并对损坏节点进行替换与数据的恢复重建。我们假设一个节点从损坏到被发现且替换并重建数据的时间为 $t_{r}$ 年，显然 $t_{r}{\ll}1$，我们用在 $t_{r}$ 周期内的对象持久性和磁盘故障率对上述公式进行替换：
-$$
+\begin{equation}
 p_{f}(n,m)=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}\left[\left(\prod_{{\forall}d_{j}{\in}S_{d}}{p_{d_j}'}\right)\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_{d_j}')\right)\right]
-$$
+\end{equation}
 
 其中的 $p_{f}'$ 和 $p_{d}'$ 的取值为在 $t_{r}$ 周期内的损坏概率，而非一年期的概率值。假设在一年内各个时点磁盘损坏的可能性相同且独立，则可以得到 $p_{d}'=1-(1-p_{d})^{t_{r}}$，$p_{f}'=p_{f}^{t_{r}}$。因此对于 On-demand ARECS 算法来说，需要选取的编码策略 $(n+m,n)$ 应该满足计算的节点可靠性大于等于对象的持久性。在 $t_{r}$ 周期内，模型确定的节点可靠性和对象持久性的差值为：
-\begin{align*}
+\begin{equation}
+\begin{split}
 f(n,m)=\sum_{i=0}^{m}\sum_{{\forall}S_{d}{\in}S_{a}(n+m,i)}&\left[\left(\prod_{{\forall}d_{j}{\in}S_{d}}\left(1-(1-p_{d_j})^{t_r}\right)\right)\right.\\
 &\cdot\left.\left(\prod_{{\forall}d_{j}{\in}S_{d}'(n+m)-S_{d}}(1-p_{d_j})^{t_{r}}\right)\right]-p_{f}^{t_{r}}
-\end{align*}
+\end{split}
+\end{equation}
 
 显然节点可靠性应达到或超过对象的持久性意味着此差值为非负值，即 $f(n,m) \geq 0$。由于编码的检验块数量 $m$ 越少，数据冗余度越低，存储延迟越小，因此 $m$ 应取满足约束 $f(n,m) \geq 0$ 的最小值：
-$$
+\begin{equation}
 m(n)=\operatorname*{argmin}_{m}f(n,m),\ \operatorname*{where}\ f(n,m) \geq 0
-$$
+\end{equation}
 \section{实验与分析}
 \subsection{模拟实验环境}
 在这一节的内容中，我们将通过模拟实验的方法，设计一个分布式存储系统实验环境，用以模拟并分析成本收益模型下的对象可用性选取，以及 On-demand ARECS 磁盘故障率模型的磁盘冗余度。根据 Pinheiro 等人的研究\cite{pinheiro2007failure}，使用时间为一年的磁盘 $p_{d}=1.7\%$，而使用时间为三年的磁盘 $p_{d}=8.6\%$。我们选取一个模拟实验环境，模拟实现了两种存储节点，节点 $A$ 的磁盘故障率为 $p_{d_{A}}=1.7\%$，节点 $B$ 的磁盘故障率为 $p_{d_{B}}=8.6\%$，存储系统中分别有 $18$ 个节点 $A$ 和节点 $B$。在通常的数据中心中，由于有专门人员负责损坏节点的检测与更换，因此损坏节点基本均能被及时发现。对于损坏节点的数据重建，因为目前的硬盘存取速度已经较快，因此正常情况下的用时也不会太长。基于此，我们不妨选取更换损坏硬盘并重建数据为 $3$ 天，即取 $t_{r}=\dfrac{3}{365}$。基于此实验环境，我们进行了以下模拟与分析。
@@ -176,13 +184,13 @@ $$
 \end{figure}
 
 从图 \ref{p5} 中我们可以看出，虽然在总体上 On-demand ARECS 动态磁盘故障率模型的磁盘冗余度相比固定磁盘故障率模型低，但是在一些特殊情况下，比如 $n=21$ 到 $n=24$ 时，On-demand ARECS 动态磁盘故障率模型和固定磁盘故障率模型得到了相同的结果，即均选取了 $m=5$ 的编码方案。我们分析实验过程可以发现，如果单纯对于概率的计算来说，只要 $n$ 值和 $m$ 值选取相同，则数据冗余度就是相同的。而在实际的分布式存储系统中，我们需要对编码块的数量，即 $m$ 的值进行向上取整，对于我们的实验环境来说，我们根据公式：
-$$
+\begin{equation}
 m(n)=\operatorname*{argmin}_{m}f(n,m),\ \operatorname*{where}\ f(n,m) \geq 0
-$$
+\end{equation}
 计算 $n=21$ 到 $n=24$ 时得到的 $m$ 值均满足 $4<m<5$，那么我们就需要选取 $m=5$ 才能保障数据安全。换句话说，不管实际上我们需要 $4.1$ 个校验块，还是实际上需要 $4.9$ 个校验块，我们都需要向上取整为 $5$ 个校验块。因此，$m$ 值的选取为了具有实际意义，其公式应为：
-$$
+\begin{equation}
 m(n)=\left\lceil\operatorname*{argmin}_{m}f(n,m)\right\rceil,\ \operatorname*{where}\ f(n,m) \geq 0
-$$
+\end{equation}
 
 由于 On-demand ARECS 算法核心在于对于不同的节点状况动态选取合适的 $n$ 值，也就是说，我们无法预先确定一个 $n$ 值，然后计算其最优的存储方案，我们需要在算法中动态选择负载低、带宽高的节点，因而 $n$ 值的最终确定需要在实际系统中动态确定。故在 On-demand ARECS 的动态磁盘故障率模型中，我们主要需要关注平均性能，也就是说对于所有 $n$ 值来说，平均冗余度更低。
 
@@ -191,9 +199,9 @@ $$
 根据 Liu 等人的研究\cite{liu2018implementation}和 Tahoe 分布式文件系统\cite{wilcox2008tahoe}的默认实现，我们可以发现 $n$ 一般均选取 $n=10$ 左右较为合适。因此在我们本节的模拟中，我们不妨选取 $n=10$ 来进行分析。对于具体 $n$ 值的选取，我们将在下一章中通过对存储系统当前状态的分析，动态选取确定最优的编码方案和节点。
 
 根据前文的分析，数据可用性的取值主要受制于数据本身的重要性，其简化的成本收益模型为：
-$$
+\begin{equation}
 xp_{f}'=ys(p_{f}')
-$$
+\end{equation}
 
 其中等式左半部分为存储系统的边际收益，右半部分为存储系统的边际成本。我们假设一份数据存储的成本为 $80$ 个单位，数据本身的价值为 $100$ 个单位，那么我们可以得到在不同磁盘故障率模型下，边际成本与边际收益的曲线图如图 \ref{p14} 所示。
 

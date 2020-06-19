@@ -92,14 +92,14 @@ RAID 10 和 RAID 01 的程序相反，其将所有硬盘分为若干个 RAID 1 �
 低密度奇偶检查码（Low-Density Parity-Check Codes，即 LDPC 码）\cite{gallager1962low}同样是一类基于异或（XOR）运算的编码，但它的存储效率不属于 MDS 编码，常用于信道编码中\cite{kumar2018detailed}。利用 LDPC 码的校验矩阵 $\boldsymbol{H}$ 可以生成其编码矩阵 $\boldsymbol{G}$，进而得到 LDPC 编码，因此 LDPC 码的特点与性能主要通过校验矩阵 $\boldsymbol{H}$ 来体现。也可以说，LDPC 码是用一个稀疏的校验矩阵 $\boldsymbol{H}$ 定义的线性分组码，构造 LDPC 码的核心就是构造 $\boldsymbol{H}$ 矩阵。常见的 $\boldsymbol{H}$ 矩阵构造方法有 Gallager 提出的方法\cite{gallager1962low}和 Mackay 提出的方法\cite{mackay1997near}等。
 
 定义 $\boldsymbol{H}$ 矩阵的行重为矩阵每行中 1 的个数，列重为矩阵每列中 1 的个数。在规则 LDPC 码的校验矩阵中，各行的行重和各列的列重均是一致的。因此可以定义一个 $(n,j,k)$ 的规则 LDPC 码的校验矩阵 $\boldsymbol{H}$ 有 $n$ 列，$m$ 行，列重为 $j$，行重为 $k$，其中 $m=n{\cdot}j/k$，$j<k$，$j{\ll}m$，$k{\ll}n$。我们以一个 $(6,2,4)$ 的规则 LDPC 码的校验矩阵为例，其行重为 4，列重为 2：
-$$
+\begin{equation}
 \boldsymbol{H}=
 \begin{bmatrix}
 1 & 1 & 0 & 1 & 1 & 0 \\
 1 & 0 & 1 & 0 & 1 & 1 \\
 0 & 1 & 1 & 1 & 0 & 1 \\
 \end{bmatrix}
-$$
+\end{equation}
 
 此 LDPC 码的校验矩阵的行对应着校验方程（校验节点），列对应着传输的比特（比特节点），它们之间的关系可以用 Tanner 图\cite{tanner1981recursive}来表示。上述 $\boldsymbol{H}$ 矩阵对应的 Tanner 图如图 \ref{p13} 所示，图的左边有 $n$ 个节点，右边有 $m$ 个节点。LDPC 码的校验矩阵可以通过矩阵的初等变换，把 $\boldsymbol{H}$ 矩阵变化成系统形式 $\boldsymbol{H'}=[\boldsymbol{P}^T,\boldsymbol{I}]$，得到该 $\boldsymbol{H}$ 矩阵对应的生成矩阵 $\boldsymbol{G}=[\boldsymbol{I},\boldsymbol{P}]$，用数据比特去乘编码矩阵 $\boldsymbol{G}$，就得到了编码结果。此算法的复杂度为 $O(n^2)$。
 
@@ -115,7 +115,7 @@ $$
 将原始数据记为向量 $\boldsymbol{D}=(D_1,D_2,\cdots,D_n)^{T}$，其经过里德-所罗门码编码生成的校验码为向量 $\boldsymbol{C}=(D_1,D_2,\cdots,D_n,C_1,C_2,\cdots,C_m)^{T}$，则里德-所罗门码的编码过程可视为矩阵运算 $\boldsymbol{G}{\times}\boldsymbol{D}=\boldsymbol{C}$，其中 $\boldsymbol{G}$ 是编码矩阵（Distribution Matrix，也可称为生成矩阵、分布矩阵）。由于解码是编码的逆运算，因此要求编码矩阵的任意 $n{\times}n$ 子方阵均为可逆矩阵。在里德-所罗门码的编码矩阵中，上部矩阵一般是 $n{\times}n$ 的单位阵，表示直接存储原始数据，下部矩阵是  $m{\times}n$ 的校验码矩阵。我们常选择范德蒙矩阵\cite{reed1960polynomial}或柯西矩阵\cite{roth1989mds}作为里德-所罗门码编码矩阵的下部矩阵。
 
 范德蒙矩阵的各列间为等比级数关系，满足任意阶子方阵可逆的要求。一个 $m{\times}n$ 的范德蒙矩阵定义如下：
-$$
+\begin{equation}
 \begin{bmatrix}
 1 & 1 & 1 & \cdots & 1 \\
 {a_1}^1 & {a_2}^1 & {a_3}^1 & \cdots & {a_n}^1 \\
@@ -123,11 +123,11 @@ $$
 \vdots & \vdots & \vdots & \ddots & \vdots \\
 {a_1}^{m-1} & {a_2}^{m-1} & {a_3}^{m-1} & \cdots & {a_n}^{m-1} \\
 \end{bmatrix}
-$$
+\end{equation}
 其中 $a_i$ 互不相同，且均不为 0。
 
 柯西矩阵的任意阶子方阵均为奇异矩阵，因此其任意阶子方阵均存在逆矩阵。而且由于柯西矩阵在迦罗华域上求逆矩阵的计算复杂度为 $O(n^2)$，相比于范德蒙矩阵求逆的计算复杂度 $O(n^3)$ 更低，运算速度更快。另外，在使用柯西矩阵进行矩阵计算时，可以通过将 $GF(2^w)$ 域的元素转换成二进制矩阵，从而将乘法转换为位运算，进而降低编码运算的复杂度。柯西矩阵的定义为：
-$$
+\begin{equation}
 \begin{bmatrix}
 \dfrac{1}{x_1+y_1} & \dfrac{1}{x_1+y_2} & \dfrac{1}{x_1+y_3} & \cdots & \dfrac{1}{x_1+y_n} \\
 \dfrac{1}{x_2+y_1} & \dfrac{1}{x_2+y_2} & \dfrac{1}{x_2+y_3} & \cdots & \dfrac{1}{x_2+y_n} \\
@@ -135,7 +135,7 @@ $$
 \vdots & \vdots & \vdots & \ddots & \vdots \\
 \dfrac{1}{x_m+y_1} & \dfrac{1}{x_m+y_2} & \dfrac{1}{x_m+y_3} & \cdots & \dfrac{1}{x_m+y_n} \\
 \end{bmatrix}
-$$
+\end{equation}
 其中 $x_i$ 和 $y_i$ 都是有限域 $GF(2^w)$ 中的元素。
 
 里德-所罗门码在任意不超过 $m$ 个数据块丢失时均可进行数据恢复。如图 \ref{p1} 所示，假设其中的 $D_2$、$D_5$ 发生损坏，我们可以从编码矩阵 $\boldsymbol{G}$ 中删掉 $D_2$、$D_5$ 对应的行，组成新矩阵 $\boldsymbol{G_1}$。根据编码矩阵任意阶子方阵可逆可以证明 $\boldsymbol{G_1}$ 是可逆的，即存在逆矩阵 $(\boldsymbol{G_1})^{-1}$，满足 $\boldsymbol{G_1}{\times}(\boldsymbol{G_1})^{-1}=\boldsymbol{I}$，其中 $\boldsymbol{I}$ 为单位矩阵。将剩余未损坏的数据左乘 $(\boldsymbol{G_1})^{-1}$ 矩阵，便可以恢复出原始数据 $\boldsymbol{D}$。
